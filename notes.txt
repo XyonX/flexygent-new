@@ -1,0 +1,8 @@
+# Create venv (do this once, inside flexygent-new/)
+python3 -m venv .venv
+
+# Activate it (you'll run this every time you open the project)
+source .venv/bin/activate
+
+# Install the project + all dependencies
+pip install -e ".[dev]"

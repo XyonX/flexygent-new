@@ -1,0 +1,9 @@
+# .gitignore
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.example
+*.egg-info/
+.DS_Store
+chroma_db/
