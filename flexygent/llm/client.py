@@ -19,3 +19,23 @@ class LLMClient:
         response = await self.client.chat.completions.create(model =self.model,messages=payload)
 
         return response.choices[0].message.content
+    
+    async def stream(self,messages:list[Message], system :str |None =None):
+
+        # build the list as plain dict for apiu
+
+        payload = []
+
+        if system:
+            payload.append({"role":"system", "content":system})
+
+        payload.extend([m.to_dict() for m in messages])
+
+        response = await self.client.chat.completions.create(model=self.model,messages=payload, stream =True)
+
+        async for chunk in response:
+            delta = chunk.choices[0].delta.content
+            if delta is not None:
+                yield delta
+
+
