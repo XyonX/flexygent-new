@@ -6,3 +6,21 @@ source .venv/bin/activate
 
 # Install the project + all dependencies
 pip install -e ".[dev]"
+
+
+
+types.txt
+
+
+
+sanity check 
+python3 -c "
+from flexygent.core.types import SystemMessage, UserMessage, MessageHistory
+
+h = MessageHistory()
+h.add(SystemMessage(content='You are helpful.'))
+h.add(UserMessage(content='Hello!'))
+print(h.to_list())
+print('len:', len(h))
+print('last:', h.last())
+"
