@@ -67,25 +67,14 @@ class Conversation(BaseModel):
 # print(output_message)
 
 
+# run command tool
+def run_command(params:dict):
 
-# tool setup
-
-class Tool(BaseModel):
-    name:str
-    description:str
-    parameter:dict[str,Any]
-    function:Callable[...,Any]
-
-
-
-class ToolRegistry(BaseModel):
-    tools:dict
-
-
-def run_command(command:str):
     import subprocess
-
+    
     try:
+        command = params.get("command")
+
         result =subprocess.run(command,
                        shell=True,
                        check=True,
@@ -97,8 +86,48 @@ def run_command(command:str):
 
 
 
+# tool setup
 
-# tool_run_command = 
+class Tool(BaseModel):
+    name:str
+    description:str
+    parameter_allowed:list
+    function:Callable[...,Any]
+
+
+
+class ToolRegistry(BaseModel):
+    tools:dict={}
+
+    def add_tool(self,tool:Tool):
+        self.tools[tool.name]= tool
+
+    def call(self,tool_name:str,params:dict):
+        filtered = { k:v for k, v in params.items() if  k in self.tools[tool_name].parameter_allowed }
+        return self.tools[tool_name].function(filtered)
+
+
+
+
+
+
+tool_run_command = Tool(name="run_command",description="Execute shell command",parameter_allowed = ["command"],function=run_command)
+
+
+
+# creating tool registry
+
+tool_registry = ToolRegistry()
+
+# addng run command tool
+
+tool_registry.add_tool(tool_run_command)
+
+
+
+output = tool_registry.call("run_command",{"command":"ls"})
+
+print (output)
 
 
 
