@@ -72,7 +72,14 @@ def run_command(params:dict):
 
     import subprocess
 
-    BLOCKED = {"rm", "shutdown", "reboot", "mkfs", "dd"}
+    BLOCKED = {
+        "rm", "shutdown", "reboot", "mkfs", "dd", "halt", "poweroff",
+        "init", "telinit", "kill", "killall", "pkill", "rmdir",
+        "mv", "cp", "chmod", "chown", "chgrp", "passwd",
+        "iptables", "ufw", "systemctl", "service", "mount", "umount",
+        "echo" 
+    }
+
 
     command = params.get("command")
 
