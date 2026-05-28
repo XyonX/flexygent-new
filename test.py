@@ -110,8 +110,26 @@ def run_command(params:dict):
 class Tool(BaseModel):
     name:str
     description:str
-    parameter_allowed:list
+    parameter_allowed:dict
     function:Callable[...,Any]
+
+    # TODO FINISH IMPLEMENTING 
+    # def to_openai_tool(self):
+    #     tool_json = {
+    #         "type":"function",
+    #         "function":{
+    #             "name":self.name,
+    #             "description":self.description,
+    #             "parameters":{
+    #                 "type":object,
+    #                 "properties":{},
+    #                 "required":[p for  p in self.parameter_allowed ]
+
+    #             }
+
+    #         }
+    #     }
+
 
 
 
@@ -122,7 +140,7 @@ class ToolRegistry(BaseModel):
         self.tools[tool.name]= tool
 
     def call(self,tool_name:str,params:dict):
-        filtered = { k:v for k, v in params.items() if  k in self.tools[tool_name].parameter_allowed }
+        filtered = { k:v for k, v in params.items() if  k in self.tools[tool_name].parameter_allowed.keys() }
         return self.tools[tool_name].function(filtered)
 
 
@@ -130,9 +148,21 @@ class ToolRegistry(BaseModel):
 
 
 
-tool_run_command = Tool(name="run_command",description="Execute shell command",parameter_allowed = ["command"],function=run_command)
+# ...existing code...
 
+tool_run_command = Tool(
+    name="run_command",
+    description="Execute shell command",
+    parameter_allowed={
+        "command": {
+            "type": "string",
+            "description": "Shell command to execute (e.g., 'ls', 'pwd')."
+        }
+    },
+    function=run_command,
+)
 
+# ...existing code...
 
 # creating tool registry
 
