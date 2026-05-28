@@ -71,9 +71,21 @@ class Conversation(BaseModel):
 def run_command(params:dict):
 
     import subprocess
+
+    BLOCKED = {"rm", "shutdown", "reboot", "mkfs", "dd"}
+
+    command = params.get("command")
+
+    if not command:
+        return "No command provided"
+
+    # Split to check the first word (the actual command)
+    cmd_name = command.split()[0]
+
+    if cmd_name in BLOCKED:
+        return f"Blocked: '{cmd_name}' is not allowed"
     
     try:
-        command = params.get("command")
 
         result =subprocess.run(command,
                        shell=True,
@@ -200,7 +212,6 @@ def cli():
 # cli()
 
 
-print(run_command("ls"))
 
 
 
