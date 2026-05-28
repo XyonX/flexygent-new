@@ -97,7 +97,7 @@ class Tool(BaseModel):
 
 
 class ToolRegistry(BaseModel):
-    tools:dict={}
+    tools:dict=Field(default_factory=dict)
 
     def add_tool(self,tool:Tool):
         self.tools[tool.name]= tool
