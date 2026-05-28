@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 import os
 from typing import Any, Callable
 
+import json
+
 # loaidng env variable and injecting them in the process 
 load_dotenv()
 
@@ -114,21 +116,22 @@ class Tool(BaseModel):
     function:Callable[...,Any]
 
     # TODO FINISH IMPLEMENTING 
-    # def to_openai_tool(self):
-    #     tool_json = {
-    #         "type":"function",
-    #         "function":{
-    #             "name":self.name,
-    #             "description":self.description,
-    #             "parameters":{
-    #                 "type":object,
-    #                 "properties":{},
-    #                 "required":[p for  p in self.parameter_allowed ]
+    def to_openai_tool(self):
+        tool_json = {
+            "type":"function",
+            "function":{
+                "name":self.name,
+                "description":self.description,
+                "parameters":{
+                    "type":"object",
+                    "properties":{k:  {kn:vn for kn,vn  in v.items() } for k,v in self.parameter_allowed.items()},
+                    "required":[p for  p in self.parameter_allowed.keys() ]
 
-    #             }
+                }
 
-    #         }
-    #     }
+            }
+        }
+        return tool_json
 
 
 
@@ -176,7 +179,11 @@ tool_registry.add_tool(tool_run_command)
 
 output = tool_registry.call("run_command",{"command":"ls"})
 
-print (output)
+# print (output)
+
+print(tool_run_command.to_openai_tool())
+# print(json.dumps(tool_run_command.to_openai_tool(), indent=2))
+
 
 
 
