@@ -215,6 +215,17 @@ tool_registry.add_tool(tool_run_command)
 
 
 
+def get_tools(tool_registry):
+    response =[]
+    for tool in tool_registry.tools.values():
+        response.append(tool.to_openai_tool())
+    return response
+
+
+
+
+
+
 output = tool_registry.call("run_command",{"command":"ls"})
 
 # print (output)
@@ -278,6 +289,17 @@ def cli():
 
     conv = Conversation()
     conv.add_message(system_message)
+
+
+    # make tools payload 
+    tools= get_tools(tool_registry)
+
+    # print tools payload 
+
+    print(json.dumps(tools, indent=2))
+
+
+    
     while 1:
 
         # take message
