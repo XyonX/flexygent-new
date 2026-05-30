@@ -234,7 +234,7 @@ def agent_loop(api_response:dict):
 
     response = api_response
 
-    while response.choice[0].finish_reason != "stop":
+    while response.choices[0].finish_reason != "stop":
         # check resonse and look for asked tool to be called 
         # call those tool 
         # prepare payload for the 
@@ -312,7 +312,7 @@ def cli():
 
 
 
-# cli()
+cli()
 
 
 
