@@ -19,12 +19,12 @@ class Role(str,Enum):
 
 class Message(BaseModel):
     role:Role
-    content:str
+    content: str | None = None  # ✅ allow None for tool-call messages
     tool_calls:list = Field(default_factory=list)
     tool_call_id:str=""
 
     def to_dict(self):
-        response ={"role":self.role.value,"content":self.content}
+        response ={"role":self.role.value,"content":self.content or ""}
         if self.tool_calls:
             response["tool_calls"]=self.tool_calls
         if self.tool_call_id:
@@ -128,7 +128,10 @@ def run_command(params:dict):
     except Exception as e:
         return " error running command"
 
-
+def get_weather(params: dict):
+    """Mock weather tool that always returns 25°C"""
+    location = params.get("location", "unknown")
+    return f"The weather in {location} is 25°C and sunny."
 
 # tool setup
 
@@ -170,7 +173,8 @@ class Tool(BaseModel):
     
     def call(self,params,tool_call_id=None):
         filtered = { k:v for k, v in params.items() if  k in self.parameter_allowed.keys() }
-        return self.to_tool_response(tool_call_id,filtered)
+        # return self.to_tool_response(tool_call_id,filtered)
+        return self.function(filtered)
 
 
 
@@ -203,6 +207,19 @@ tool_run_command = Tool(
     function=run_command,
 )
 
+
+tool_get_weather = Tool(
+    name="get_weather",
+    description="Get the current weather for a location",
+    parameter_allowed={
+        "location": {
+            "type": "string",
+            "description": "The city or location to get weather for (e.g., 'London', 'New York')."
+        }
+    },
+    function=get_weather,
+)
+
 # ...existing code...
 
 # creating tool registry
@@ -212,6 +229,7 @@ tool_registry = ToolRegistry()
 # addng run command tool
 
 tool_registry.add_tool(tool_run_command)
+tool_registry.add_tool(tool_get_weather)
 
 
 
@@ -233,7 +251,7 @@ output = tool_registry.call("run_command",{"command":"ls"})
 print(tool_run_command.to_openai_tool())
 # print(json.dumps(tool_run_command.to_openai_tool(), indent=2))
 
-def agent_loop(api_response:dict):
+def agent_loop(conversation:Conversation, api_response:dict,tools:list):
     
     # request is a tool call rewuest so we must 
     # tool call
@@ -242,18 +260,42 @@ def agent_loop(api_response:dict):
     # send the new message history to llm
     # get api response then update the response object 
 
-
     response = api_response
 
+
+    iter_no=1
+
     while response.choices[0].finish_reason != "stop":
+
+        print("iteration no :",iter_no)
         # check resonse and look for asked tool to be called 
         # call those tool 
         # prepare payload for the 
-        pass
-        
+
+        # 01 as this is nto a final resposne it must be a tool call request 
+        # we are gonna add this to our converation hiosoty
+        conversation.add_assistant_message(content=response.choices[0].message.content,tool_calls=response.choices[0].message.tool_calls)
 
 
-    
+        # 02 now we added the toool call request to the conversation
+        # next step is to call each mentioned tools 
+
+        for t in response.choices[0].message.tool_calls:
+            params = json.loads(t.function.arguments)
+            tool_call_res = tool_registry.call(t.function.name,params)
+            conversation.add_tool_response(tool_call_id=t.id,content=tool_call_res)
+
+        # 02 now as we have called all the tools and appended response as message in the conversation
+
+        # 03 now can send a reqeust to the llm again or for the second pass
+
+        second_response = client.chat.completions.create(model="openrouter/owl-alpha",messages=conversation.to_dict(),tools=tools)
+
+
+        iter_no=iter_no+1
+
+        response = second_response
+
     return response.choices[0].message.content
 
 
@@ -294,10 +336,6 @@ def cli():
     # make tools payload 
     tools= get_tools(tool_registry)
 
-    # print tools payload 
-
-    print(json.dumps(tools, indent=2))
-
 
     
     while 1:
@@ -311,16 +349,16 @@ def cli():
             return
         
         # make a user message 
-        user_message = Message(role=Role.USER,content = input_message)
+        user_message = Message(role=Role.USER,content = input_message,)
 
         # add it in conversation
         conv.add_message(user_message)
 
 
-        response = client.chat.completions.create(model ="openrouter/owl-alpha",messages=conv.to_dict())
+        response = client.chat.completions.create(model ="openrouter/owl-alpha",messages=conv.to_dict(),tools=tools)
 
 
-        final_response = agent_loop(response)
+        final_response = agent_loop(conv,response,tools)
         # print response 
         print("assistant: ",final_response)
         print("\n")
