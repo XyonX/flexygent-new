@@ -58,40 +58,6 @@ class Conversation(BaseModel):
         return ret
         
 
-    
-# m1 = Message(role=Role.USER, content="How are you ? ")
-# m2 = Message(role=Role.ASSISTANT, content="Hello! I'm doing well, thank you for asking! How can I help you today?")
-# m3 = Message(role=Role.USER, content="great, anything exciting happening in the field of computer science ")
-
-# conv = Conversation()
-
-# conv.add_message(m1)
-# conv.add_message(m2)
-# conv.add_message(m3)
-
-# # history = conv.to_dict()
-
-# # print(history)
-
-
-
-# api_key = os.getenv("API")
-# base_url = os.getenv("ENDPOINT")
-
-# client = OpenAI(api_key=api_key,base_url=base_url)
-
-# response = client.chat.completions.create(model="openrouter/owl-alpha",messages = conv.to_dict())
-
-# output_message = response.choices[0].message.content
-
-# m4 = Message(role=Role.ASSISTANT,content=output_message)
-
-
-# conv.add_message(m4)
-
-# print(output_message)
-
-
 # run command tool
 def run_command(params:dict):
 
@@ -175,8 +141,6 @@ class Tool(BaseModel):
         filtered = { k:v for k, v in params.items() if  k in self.parameter_allowed.keys() }
         # return self.to_tool_response(tool_call_id,filtered)
         return self.function(filtered)
-
-
 
 
 class ToolRegistry(BaseModel):
