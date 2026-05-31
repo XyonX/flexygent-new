@@ -5,6 +5,49 @@ from flexygent.types import Role
 from flexygent.tools import tool_registry, get_tools
 from flexygent.client import client
 from flexygent.agent import agent_loop
+import json
+from datetime import datetime
+import glob
+
+def gen_file_name():
+    now = datetime.now()
+
+    formatted_string ="conversation-"+now.strftime('%Y-%m-%d_%H-%M-%S')+".json"
+    return formatted_string
+
+
+def get_saved_files():
+    files = glob.glob("conversation-*.json")
+    return  sorted(files,reverse=True)
+
+
+def save_conversation(conversation:Conversation,file_name):
+    print("saving conversation ... ")
+    # create pydantic dump
+    conversation_dump =  conversation.model_dump()
+
+
+    # save it in a json file u
+    with open(file_name,"w") as file:
+        json.dump(conversation_dump,file,indent =4)
+
+    print("conversation save done !")
+
+def load_conversation(file_name:str):
+
+    print("Loading conversation")
+
+    # loiad the json data form the file 
+    with open(file_name,"r") as file:
+        data = json.load(file)
+    
+
+    print("Loading conversation done ! ")
+    return Conversation.model_validate(data)
+
+
+
+
 
 
 def cli():
@@ -38,6 +81,17 @@ def cli():
     tools= get_tools(tool_registry)
 
 
+    saved_conversation_files = get_saved_files()
+
+    if(len(saved_conversation_files) !=0):
+        print("Saved file detected , would you like to load the latest one ? ")
+        input_value = input()
+        no_val = ["no","n","nahi"]
+        if input_value in no_val:
+            pass
+        else:
+            conv=load_conversation(saved_conversation_files[0])
+            
     
     while 1:
 
@@ -47,7 +101,7 @@ def cli():
         print("\n")
 
         if input_message == "exit":
-            return
+            return conv
         
         # make a user message 
         user_message = Message(role=Role.USER,content = input_message,)
@@ -70,8 +124,21 @@ def cli():
 
         # add it in conversation
         conv.add_message(llm_message)
+    
+    return conv
 
 
 
 if __name__ == "__main__":
-    cli()
+
+    try:
+        conv = cli()
+    except KeyboardInterrupt:
+        print("\nUser pressed Ctrl+C, stopping gracefully")
+    except Exception as e:
+        print("unexpected errpr:",e)
+    finally:
+        if conv is not None:
+            file_name = gen_file_name()
+            save_conversation(conv,file_name)
+            print("Conversation saved before exit to the file : ", file_name)
