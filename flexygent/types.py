@@ -50,7 +50,7 @@ class Conversation(BaseModel):
 
 
 class AgentConfig(BaseModel):
-    max_iteration:int =10
+    max_iterations:int =10
     model:str= "openrouter/owl-alpha"
     verbose:bool =False
     temperature:float = 0.7
