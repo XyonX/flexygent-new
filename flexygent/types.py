@@ -10,7 +10,7 @@ class Role(str,Enum):
 class Message(BaseModel):
     role:Role
     content: str | None = None  # ✅ allow None for tool-call messages
-    tool_calls:list = Field(default_factory=list)
+    tool_calls:list | None = Field(default_factory=list)
     tool_call_id:str=""
 
     def to_dict(self):
@@ -46,3 +46,13 @@ class Conversation(BaseModel):
         for message in self.messages:
             ret.append(message.to_dict())
         return ret
+    
+
+
+class AgentConfig(BaseModel):
+    max_iteration:int =10
+    model:str= "openrouter/owl-alpha"
+    verbose:bool =False
+    temperature:float = 0.7
+    enable_rag :bool = False
+    skill:str | None = None

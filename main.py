@@ -1,13 +1,13 @@
 
-from flexygent.types import Conversation
-from flexygent.types import Message
-from flexygent.types import Role
+from flexygent.types import Conversation,Message,Role,AgentConfig
 from flexygent.tools import tool_registry, get_tools
 from flexygent.client import client
 from flexygent.agent import agent_loop
 import json
 from datetime import datetime
 import glob
+
+
 
 def gen_file_name():
     now = datetime.now()
@@ -44,9 +44,6 @@ def load_conversation(file_name:str):
 
     print("Loading conversation done ! ")
     return Conversation.model_validate(data)
-
-
-
 
 
 
@@ -91,6 +88,9 @@ def cli():
             pass
         else:
             conv=load_conversation(saved_conversation_files[0])
+
+
+    config  = AgentConfig()
             
     
     while 1:
@@ -103,27 +103,11 @@ def cli():
         if input_message == "exit":
             return conv
         
-        # make a user message 
-        user_message = Message(role=Role.USER,content = input_message,)
+        output_message = agent_loop(conv,input_message,tools,tool_registry,client,config)
 
-        # add it in conversation
-        conv.add_message(user_message)
-
-
-        response = client.chat.completions.create(model ="openrouter/owl-alpha",messages=conv.to_dict(),tools=tools)
-
-
-        final_response = agent_loop(conv,response,tools,tool_registry,client)
         # print response 
-        print("assistant: ",final_response)
+        print("assistant: ",output_message)
         print("\n")
-
-        # make llm message 
-
-        llm_message = Message(role=Role.ASSISTANT, content=final_response)
-
-        # add it in conversation
-        conv.add_message(llm_message)
     
     return conv
 
@@ -131,6 +115,7 @@ def cli():
 
 if __name__ == "__main__":
 
+    conv = None
     try:
         conv = cli()
     except KeyboardInterrupt:
