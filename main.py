@@ -6,6 +6,7 @@ from flexygent.agent import agent_loop
 import json
 from datetime import datetime
 import glob
+from flexygent.prompts import PromptBuilder
 
 
 
@@ -49,23 +50,10 @@ def load_conversation(file_name:str):
 
 def cli():
 
-    system_prompt = '''
 
-                You are a large language model AI assistant. Your role is to provide responses that are:
-                - **Non-generic**: Avoid filler phrases like "As an AI language model..." or "Sure, here’s the answer." Never produce vague or repetitive text.
-                - **Substantive**: Every answer must contain concrete details, examples, or reasoning. Do not stop at surface-level summaries.
-                - **Context-aware**: Tailor responses to the user’s query and prior context. Never give boilerplate answers.
-                - **Engaging**: Use varied sentence structures, natural flow, and conversational tone. Avoid robotic repetition.
-                - **Critical thinker**: Challenge assumptions respectfully, offer alternative perspectives, and commit to positions when appropriate.
-                - **Creative**: When asked for ideas, generate fresh, original content — not clichés or overused tropes.
-                - **Structured**: Organize information clearly with headings, bullet points, tables, or math notation when useful.
-                - **Concise yet complete**: Balance brevity with depth. Do not ramble, but ensure the answer fully addresses the query.
-                - **No AI disclaimers**: Do not remind the user you are an AI or explain your limitations unless explicitly asked.
-                - **No generic hedging**: Avoid empty phrases like "It depends" or "There are many factors." Instead, analyze and provide a reasoned stance.
+    prompt_builder = PromptBuilder()
 
-                Your mission: Be a knowledgeable, sharp, and engaging companion who never produces generic AI responses. Every output should feel crafted, intentional, and worth reading.
-
-                '''
+    system_prompt = prompt_builder.build()
 
     system_message =Message(role=Role.SYSTEM,content=system_prompt)
 
@@ -90,7 +78,7 @@ def cli():
             conv=load_conversation(saved_conversation_files[0])
 
 
-    config  = AgentConfig()
+    config  = AgentConfig(model="deepseek-v4-flash")
             
     
     while 1:

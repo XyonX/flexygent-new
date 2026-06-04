@@ -12,9 +12,7 @@ def agent_loop(conversation:Conversation,input_message:str,tools:list,tool_regis
 
     iter_no=1
     while iter_no<=config.max_iterations and response.choices[0].finish_reason !="stop":
-        # inject warning 
-        # if iter_no==config.max_iterations-1:
-            # inject the warning message to llm
+
         conversation.add_assistant_message(content=response.choices[0].message.content,tool_calls=response.choices[0].message.tool_calls)
 
 
@@ -26,10 +24,21 @@ def agent_loop(conversation:Conversation,input_message:str,tools:list,tool_regis
                 tool_call_res=f"Tool error : {str(e)}"
             conversation.add_tool_response(tool_call_id=t.id,content=tool_call_res)
 
+
+        messages_payload = conversation.to_dict()
+
+        # injecting the warning message before sending if the we reached max iteration
+        if iter_no==config.max_iterations:
+            warning = {"role":"system",
+                       "content":"You have reached the maximum tool call limit. You must now give your final response directly without calling any more tools."
+                       }
+            messages_payload.append(warning)
         
-        response = client.chat.completions.create(model=config.model,messages=conversation.to_dict(),tools=tools)
+        response = client.chat.completions.create(model=config.model,messages=messages_payload,tools=tools)
         iter_no=iter_no+1
-        # or we could simply inject a warning messaging mention the ineration no left for the llm
+
+
+
 
 
     generated_response = response.choices[0].message.content
