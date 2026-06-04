@@ -1,6 +1,7 @@
 from flexygent.tools.base import Tool,ToolRegistry
 from flexygent.tools.filesystem import read_file,write_file,replace
 from flexygent.tools.system import run_command,get_weather
+from flexygent.tools.web import web_fetch
 
 
 tool_run_command = Tool(
@@ -81,6 +82,19 @@ tool_replace = Tool(
 )
 
 
+tool_web_fetch = Tool(
+    name="web_fetch",
+    description="Fetch and read content from a URL. Strips HTML tags and returns clean readable text. Use this to read documentation, articles, or any web page. Always provide the full URL including https://",
+    parameter_allowed={
+        "url": {
+            "type": "string",
+            "description": "The full URL to fetch (e.g., 'https://docs.python.org/3/library/json.html')"
+        }
+    },
+    function=web_fetch,
+)
+
+
 tool_registry = ToolRegistry()
 
 tool_registry.add_tool(tool_run_command)
@@ -88,3 +102,4 @@ tool_registry.add_tool(tool_get_weather)
 tool_registry.add_tool(tool_read_file)
 tool_registry.add_tool(tool_write_file)
 tool_registry.add_tool(tool_replace)
+tool_registry.add_tool(tool_web_fetch)
