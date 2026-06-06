@@ -2,6 +2,7 @@ from flexygent.tools.base import Tool,ToolRegistry
 from flexygent.tools.filesystem import read_file,write_file,replace
 from flexygent.tools.system import run_command,get_weather
 from flexygent.tools.web import web_fetch
+from flexygent.tools.python_repl import python_repl
 
 
 tool_run_command = Tool(
@@ -94,6 +95,17 @@ tool_web_fetch = Tool(
     function=web_fetch,
 )
 
+tool_python_repl = Tool(
+    name="python_repl",
+    description="Execute Python code in an isolated subprocess and return the output. Use this for calculations, data processing, testing logic, or anything that needs actual code execution rather than guessing. Always use print() to output results — return values alone won't show. Do not use for file operations, use read_file/write_file instead.",
+    parameter_allowed={
+        "code": {
+            "type": "string",
+            "description": "Valid Python code to execute. Use print() for any output you want returned. Example: 'print(2 ** 100)'"
+        }
+    },
+    function=python_repl,
+)
 
 tool_registry = ToolRegistry()
 
@@ -103,3 +115,4 @@ tool_registry.add_tool(tool_read_file)
 tool_registry.add_tool(tool_write_file)
 tool_registry.add_tool(tool_replace)
 tool_registry.add_tool(tool_web_fetch)
+tool_registry.add_tool(tool_python_repl)
