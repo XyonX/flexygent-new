@@ -1,9 +1,11 @@
+from __future__ import annotations
 from pydantic import BaseModel,Field
 from enum import Enum
+from typing import TYPE_CHECKING
 from flexygent.prompts.builder import PromptBuilder
-from flexygent.skills import Skill,SkillRegistry
-from flexygent.types import AgentConfig
-from flexygent.types import Message
+
+if TYPE_CHECKING:
+    from flexygent.skills import Skill,SkillRegistry
 
 
 class Role(str,Enum):
