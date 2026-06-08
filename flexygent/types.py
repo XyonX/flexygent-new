@@ -70,9 +70,43 @@ class Agent(BaseModel):
     config:AgentConfig = Field(default_factory = AgentConfig)
     active_skills: list[str] = Field(default_factory=list)
 
-    def apply_skill(self,skill_name,skill_registry:SkillRegistry):
+    def apply_skill(self,skill_name:str,skill_registry:SkillRegistry):
         skill_registry.apply(skill_name,self.builder,self.config)
         self.active_skills.append(skill_name)
+
+        skill_description = []
+
+        for s_name in self.active_skills:
+            skill = skill_registry.get(s_name)
+            if skill is not None:
+                skill_description.append(f"-{skill.name}: {skill.identity_intro} \n -read_file('{skill.doc_path}')")
+
+
+        # update the builder for available_skills
+        skill_str = f"""
+
+## Available Skills
+
+    You have the following skills loaded. When a query requires deep 
+    expertise in a specific area, read the skill doc first:
+
+    {'\n'.join(skill_description)}
+
+    Always read the relevant skill doc before responding to domain-specific queries.
+
+        """
+
+        if "available_skills" in self.builder.data:
+            self.builder.update("available_skills",skill_str)
+        else:
+            self.builder.add("available_skills",skill_str)
+
+    
+    def apply_skills(self,skills: list,skill_registry:SkillRegistry):
+        for skill_name in skills:
+            self.apply_skill(skill_name,skill_registry)
+
+
 
     def get_system_message(self):
         return Message(role=Role.SYSTEM,content=self.builder.build())

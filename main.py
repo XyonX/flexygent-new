@@ -7,6 +7,9 @@ import json
 from datetime import datetime
 import glob
 from flexygent.prompts import PromptBuilder
+from flexygent.types import Agent
+from flexygent.skills import skill_registry,flex_skills
+import json
 
 
 
@@ -50,54 +53,55 @@ def load_conversation(file_name:str):
 
 def cli():
 
+    flex = Agent(name="flex")
+    flex.apply_skills(flex_skills,skill_registry)
 
-    prompt_builder = PromptBuilder()
+    system_message = flex.get_system_message()
+    
 
-    system_prompt = prompt_builder.build()
-
-    system_message =Message(role=Role.SYSTEM,content=system_prompt)
-
-
-    conv = Conversation()
-    conv.add_message(system_message)
+    print(json.dumps(system_message.to_dict(), indent=4))
 
 
-    # make tools payload 
-    tools= get_tools(tool_registry)
+    # conv = Conversation()
+    # conv.add_message(system_message)
 
 
-    saved_conversation_files = get_saved_files()
-
-    if(len(saved_conversation_files) !=0):
-        print("Saved file detected , would you like to load the latest one ? ")
-        input_value = input()
-        no_val = ["no","n","nahi"]
-        if input_value in no_val:
-            pass
-        else:
-            conv=load_conversation(saved_conversation_files[0])
+    # # make tools payload 
+    # tools= get_tools(tool_registry)
 
 
-    config  = AgentConfig(model="deepseek-v4-flash")
+    # saved_conversation_files = get_saved_files()
+
+    # if(len(saved_conversation_files) !=0):
+    #     print("Saved file detected , would you like to load the latest one ? ")
+    #     input_value = input()
+    #     no_val = ["no","n","nahi"]
+    #     if input_value in no_val:
+    #         pass
+    #     else:
+    #         conv=load_conversation(saved_conversation_files[0])
+
+
+    # config  = AgentConfig(model="deepseek-v4-flash")
             
     
-    while 1:
+    # while 1:
 
-        # take message
-        input_message = input("Enter message : ")
+    #     # take message
+    #     input_message = input("Enter message : ")
 
-        print("\n")
+    #     print("\n")
 
-        if input_message == "exit":
-            return conv
+    #     if input_message == "exit":
+    #         return conv
         
-        output_message = agent_loop(conv,input_message,tools,tool_registry,client,config)
+    #     output_message = agent_loop(conv,input_message,tools,tool_registry,client,config)
 
-        # print response 
-        print("assistant: ",output_message)
-        print("\n")
+    #     # print response 
+    #     print("assistant: ",output_message)
+    #     print("\n")
     
-    return conv
+    # return conv
 
 
 
