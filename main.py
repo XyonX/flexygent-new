@@ -53,55 +53,51 @@ def load_conversation(file_name:str):
 
 def cli():
 
-    flex = Agent(name="flex")
+    config  = AgentConfig(model="deepseek-v4-flash")
+
+    flex = Agent(name="flex",config=config)
     flex.apply_skills(flex_skills,skill_registry)
 
     system_message = flex.get_system_message()
-    
 
-    print(json.dumps(system_message.to_dict(), indent=4))
-
-
-    # conv = Conversation()
-    # conv.add_message(system_message)
+    conv = Conversation()
+    conv.add_message(system_message)
 
 
     # # make tools payload 
-    # tools= get_tools(tool_registry)
+    tools= get_tools(tool_registry)
 
 
-    # saved_conversation_files = get_saved_files()
+    saved_conversation_files = get_saved_files()
 
-    # if(len(saved_conversation_files) !=0):
-    #     print("Saved file detected , would you like to load the latest one ? ")
-    #     input_value = input()
-    #     no_val = ["no","n","nahi"]
-    #     if input_value in no_val:
-    #         pass
-    #     else:
-    #         conv=load_conversation(saved_conversation_files[0])
+    if(len(saved_conversation_files) !=0):
+        print("Saved file detected , would you like to load the latest one ? ")
+        input_value = input()
+        no_val = ["no","n","nahi"]
+        if input_value in no_val:
+            pass
+        else:
+            conv=load_conversation(saved_conversation_files[0])
 
-
-    # config  = AgentConfig(model="deepseek-v4-flash")
             
     
-    # while 1:
+    while 1:
 
-    #     # take message
-    #     input_message = input("Enter message : ")
+        # take message
+        input_message = input("Enter message : ")
 
-    #     print("\n")
+        print("\n")
 
-    #     if input_message == "exit":
-    #         return conv
+        if input_message == "exit":
+            return conv
         
-    #     output_message = agent_loop(conv,input_message,tools,tool_registry,client,config)
+        output_message = agent_loop(conv,input_message,tools,tool_registry,client,flex.config)
 
-    #     # print response 
-    #     print("assistant: ",output_message)
-    #     print("\n")
+        # print response 
+        print("assistant: ",output_message)
+        print("\n")
     
-    # return conv
+    return conv
 
 
 
