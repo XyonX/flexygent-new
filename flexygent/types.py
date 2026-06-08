@@ -1,5 +1,10 @@
 from pydantic import BaseModel,Field
 from enum import Enum
+from flexygent.prompts.builder import PromptBuilder
+from flexygent.skills import Skill,SkillRegistry
+from flexygent.types import AgentConfig
+from flexygent.types import Message
+
 
 class Role(str,Enum):
     SYSTEM="system"
@@ -55,4 +60,34 @@ class AgentConfig(BaseModel):
     verbose:bool =False
     temperature:float = 0.7
     enable_rag :bool = False
-    skill:str | None = None
+
+
+class Agent(BaseModel):
+    name:str
+    builder : PromptBuilder=Field(default_factory = PromptBuilder)
+    config:AgentConfig = Field(default_factory = AgentConfig)
+    active_skills: list[str] = Field(default_factory=list)
+
+    def apply_skill(self,skill_name,skill_registry:SkillRegistry):
+        skill_registry.apply(skill_name,self.builder,self.config)
+        self.active_skills.append(skill_name)
+
+    def get_system_message(self):
+        return Message(role=Role.SYSTEM,content=self.builder.build())
+    
+    def get_tool_filter(self,skill_registry:SkillRegistry):
+
+        if not self.active_skills:
+            return None
+        tools = set()
+
+        for skill_name in self.active_skills:
+            skill = skill_registry.get(skill_name)
+            skill_tools = skill.allowed_tools
+            if skill_tools is None:
+                return None
+            tools.update(skill_tools)
+        
+        return list(tools)
+
+

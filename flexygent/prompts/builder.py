@@ -21,6 +21,8 @@ class PromptBuilder(BaseModel):
         self.data.pop(key,None)
     def build(self):
         return "\n\n".join(self.data.values())
+    def get_section(self,section_name:str):
+        return self.data.get(section_name,"")
     
 
 
