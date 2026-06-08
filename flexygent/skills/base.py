@@ -1,3 +1,4 @@
+# base.py
 from pydantic import BaseModel,Field
 from flexygent.prompts.builder import PromptBuilder
 from flexygent.types import AgentConfig
@@ -34,7 +35,7 @@ class SkillRegistry(BaseModel):
         builder.update("identity",new_intro_section)
 
         # update the agent config
-        for k,v in skill.config_overrides:
+        for k,v in skill.config_overrides.items():
             setattr(config,k,v)
             
 
