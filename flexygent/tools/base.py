@@ -59,10 +59,21 @@ class ToolRegistry(BaseModel):
     def call(self,tool_name:str,params:dict):
         return self.tools[tool_name].call(params)
 
-def get_tools(tool_registry):
+def get_tools(tool_registry:ToolRegistry,allowed:list):
+
     response =[]
-    for tool in tool_registry.tools.values():
-        response.append(tool.to_openai_tool())
+
+
+    if allowed is None:
+        for tool in tool_registry.tools.values():
+            response.append(tool.to_openai_tool())
+    else:
+
+        for tool_name in allowed:
+            tool=tool_registry.tools.get(tool_name,None)
+            if tool is not None:
+                response.append(tool.to_openai_tool())
+
     return response
 
 
