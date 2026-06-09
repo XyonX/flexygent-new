@@ -10,7 +10,12 @@ load_dotenv()
 api_key = os.getenv("API")
 base_url = os.getenv("ENDPOINT")
 
-client = OpenAI(api_key=api_key,base_url=base_url)
+cloudflare_api_key= os.getenv("CLOUDFLARE_API_KEY")       # your API token
+cloduflare_account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID") # your account ID
+
+cloudflare_base_url=f"https://api.cloudflare.com/client/v4/accounts/{cloduflare_account_id}/ai/v1"
+
+client = OpenAI(api_key=cloudflare_api_key,base_url=cloudflare_base_url)
 
 
 class Settings(BaseSettings):

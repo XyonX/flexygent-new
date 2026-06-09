@@ -79,7 +79,7 @@ class Agent(BaseModel):
         for s_name in self.active_skills:
             skill = skill_registry.get(s_name)
             if skill is not None:
-                skill_description.append(f"-{skill.name}: {skill.identity_intro} \n -read_file('{skill.doc_path}')")
+                skill_description.append(f"-{skill.name}: {skill.identity_intro} \n -read_file('flexygent/{skill.doc_path}')")
 
 
         # update the builder for available_skills

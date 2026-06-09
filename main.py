@@ -54,6 +54,8 @@ def load_conversation(file_name:str):
 def cli():
 
     config  = AgentConfig(model="deepseek-v4-flash")
+    # config  = AgentConfig(model="anthropic/claude-opus-4.7")
+
 
     flex = Agent(name="flex",config=config)
     flex.apply_skills(flex_skills,skill_registry)
