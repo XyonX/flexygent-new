@@ -65,7 +65,8 @@ def cli():
 
 
     # # make tools payload 
-    tools= get_tools(tool_registry)
+    tool_filter= flex.get_tool_filter(skill_registry)
+    tools= get_tools(tool_registry,tool_filter)
 
 
     saved_conversation_files = get_saved_files()
