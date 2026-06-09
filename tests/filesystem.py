@@ -2,8 +2,8 @@ import os
 
 # ── paste your three functions here ──────────────────────────────────────────
 
-def read_file(filename:str,output_length =8000 ):
-    file_handler = open(filename,"r")
+def read_file(file_name:str,output_length =8000 ):
+    file_handler = open(file_name,"r")
 
     content = file_handler.read()
 
@@ -11,26 +11,26 @@ def read_file(filename:str,output_length =8000 ):
 
     return content[:8000]
 
-def replace(filename,old_string,new_string):
+def replace(file_name,old_string,new_string):
 
-    with open(filename,"r") as f:
+    with open(file_name,"r") as f:
         content = f.read()
 
     if old_string not in content:
-        return f"Error: could not find the target string in {filename}"
+        return f"Error: could not find the target string in {file_name}"
     if content.count(old_string)>1:
         return f"Error: found multiple matches, be more specific"
     new_content = content.replace(old_string,new_string,1)
 
-    with open(filename,"w") as f:
+    with open(file_name,"w") as f:
         f.write(new_content)
     
-    return f"Successfully edited {filename}"
+    return f"Successfully edited {file_name}"
 
-def write_file(filename,content):
+def write_file(file_name,content):
 
     # for append we use "a"
-    file_handler = open(filename,"w")
+    file_handler = open(file_name,"w")
     file_handler.write(content)
     file_handler.close()
 
@@ -143,5 +143,3 @@ if __name__ == "__main__":
         cleanup()
         print("\ntemp file cleaned up")
     print("\ndone.")
-
-
