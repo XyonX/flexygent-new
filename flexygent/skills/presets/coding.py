@@ -18,6 +18,7 @@ coding_skill = Skill(
         "python_repl",
         "run_command",
         "web_fetch",
+        "collect_input"
     ],
     config_overrides={
         "max_iterations": 20,
