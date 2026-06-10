@@ -3,12 +3,18 @@ from flexygent.prompts.behavior import BEHAVIOR
 from flexygent.prompts.guardrails import GUARDRAILS
 from flexygent.prompts.identity import IDENTITY
 from flexygent.prompts.react import REACT
-
+from flexygent.prompts.user_data import USER_DATA
 
 # ibrg ordered 
 
 class PromptBuilder(BaseModel):
-    data:dict=Field(default_factory=lambda:{"identity":IDENTITY,"behavior":BEHAVIOR,"react":REACT,"guardrails":GUARDRAILS})
+    data: dict = Field(default_factory=lambda: {
+        "identity":  IDENTITY,
+        "behavior":  BEHAVIOR,
+        "user_data": USER_DATA,
+        "react":     REACT,
+        "guardrails": GUARDRAILS
+    })
 
     def add(self,key:str,prompt:str):
         self.data[key]=prompt
