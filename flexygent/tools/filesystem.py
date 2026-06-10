@@ -1,3 +1,5 @@
+from pathlib import Path
+
 def read_file(params: dict):
     file_name = params.get("file_name")
     output_length = params.get("output_length", 8000)
@@ -6,6 +8,7 @@ def read_file(params: dict):
         return "Error: no file name is provided"
 
     try:
+        file_name = str(Path(file_name).expanduser())
         with open(file_name) as f:
             content = f.read()
         return content[:output_length]
@@ -21,6 +24,7 @@ def replace(params: dict):
     new_string = params.get("new_string")
 
     try:
+        file_name = str(Path(file_name).expanduser())
         with open(file_name, "r") as f:
             content = f.read()
         if old_string not in content:
@@ -48,6 +52,8 @@ def write_file(params: dict):
         return "Error: no file name is provided"
 
     try:
+        file_name = str(Path(file_name).expanduser())
+        Path(file_name).parent.mkdir(parents=True, exist_ok=True)
         with open(file_name, "w") as f:
             f.write(content)
         return f"Successfully wrote to '{file_name}'"
