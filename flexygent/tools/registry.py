@@ -110,7 +110,7 @@ tool_python_repl = Tool(
 
 tool_collect_input = Tool(
     name="collect_input",
-    description="Prompt the user to provide values for a dynamic list of fields. Use this when you need information from the user that wasn't provided upfront. Pass a 'fields' array where each item has a 'key' (variable name) and optional 'label' (human-readable prompt). Returns a JSON object with the collected values.",
+    description="Collect structured data from the user by defining specific fields (key, label) to prompt for. Use ONLY when you need discrete values like name, email, config options, or form fields. DO NOT use this for open-ended questions, clarifications, or conversational back-and-forth — just respond normally in those cases. Pass a 'fields' array where each item has a 'key' (variable name) and optional 'label' (human-readable prompt). Returns a JSON object with the collected values.",
     parameter_allowed={
         "fields": {
             "type": "array",
