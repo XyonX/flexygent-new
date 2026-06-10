@@ -3,6 +3,7 @@ from flexygent.tools.filesystem import read_file,write_file,replace
 from flexygent.tools.system import run_command,get_weather
 from flexygent.tools.web import web_fetch
 from flexygent.tools.python_repl import python_repl
+from flexygent.tools.user_input import collect_input
 
 
 tool_run_command = Tool(
@@ -107,6 +108,26 @@ tool_python_repl = Tool(
     function=python_repl,
 )
 
+tool_collect_input = Tool(
+    name="collect_input",
+    description="Prompt the user to provide values for a dynamic list of fields. Use this when you need information from the user that wasn't provided upfront. Pass a 'fields' array where each item has a 'key' (variable name) and optional 'label' (human-readable prompt). Returns a JSON object with the collected values.",
+    parameter_allowed={
+        "fields": {
+            "type": "array",
+            "description": "List of fields to collect from the user. Each field should have a 'key' (the variable name) and optionally a 'label' (the prompt shown to the user).",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "key": {"type": "string", "description": "The key/name for this field in the returned JSON"},
+                    "label": {"type": "string", "description": "Human-readable prompt shown to the user"}
+                },
+                "required": ["key"]
+            }
+        }
+    },
+    function=collect_input,
+)
+
 tool_registry = ToolRegistry()
 
 tool_registry.add_tool(tool_run_command)
@@ -116,3 +137,4 @@ tool_registry.add_tool(tool_write_file)
 tool_registry.add_tool(tool_replace)
 tool_registry.add_tool(tool_web_fetch)
 tool_registry.add_tool(tool_python_repl)
+tool_registry.add_tool(tool_collect_input)
