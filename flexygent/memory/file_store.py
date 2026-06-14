@@ -36,9 +36,15 @@ class FileStore(ConversationMemory):
         files = self.base_dir.glob(pattern)
         return sorted([f.name for f in files],reverse=True)
 
+    def delete(self, file_name):
+        print("aa")
+
+    def exists(self, file_name):
+        print("aa")
 
 
-        
+
+
 
 
 
