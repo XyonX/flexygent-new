@@ -42,25 +42,39 @@ def app():
             # conv=load_conversation(saved_conversation_files[0])
             conv=memory.load(saved_conversation_files[0])
 
+
+
+    try:
+
+        while 1:
+
+            # take message
+            input_message = input("Enter message : ")
+
+            print("\n")
+
+            if input_message == "exit":
+                return conv
             
+            output_message = agent_loop(conv,input_message,tools,tool_registry,client,flex.config)
+
+            # print response 
+            print("assistant: ",output_message)
+            print("\n")
+
+    except KeyboardInterrupt:
+        print("\nUser pressed Ctrl+C, stopping gracefully")
+    except Exception as e:
+        print("unexpected errpr:",e)
+    finally:
+        if conv is not None:
+            file_name = memory.gen_file_name()
+            memory.save(conv,file_name)
+            print("Conversation saved before exit to the file : ", file_name)
+
+
     
-    while 1:
 
-        # take message
-        input_message = input("Enter message : ")
-
-        print("\n")
-
-        if input_message == "exit":
-            return conv
-        
-        output_message = agent_loop(conv,input_message,tools,tool_registry,client,flex.config)
-
-        # print response 
-        print("assistant: ",output_message)
-        print("\n")
-    
-    return conv
 
 if __name__ == "__main__":
     app()
