@@ -11,7 +11,7 @@ class UserIO(ABC):
 
     # show the output to the user could print() in cli
     @abstractmethod
-    def show_input(self,message:str):
+    def show_output(self,message:str):
         ...
 
 

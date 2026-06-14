@@ -7,8 +7,11 @@ from flexygent.tools import tool_registry, get_tools
 from flexygent.agent import agent_loop
 from flexygent.client import client
 from flexygent.memory.file_store import FileStore
+from flexygent.adapters.cli import CliUserIO
 
 def app():
+
+    io=CliUserIO()
     # use the framrwork and make the cli app
     
     config  = AgentConfig(model="deepseek-v4-flash")
@@ -43,13 +46,12 @@ def app():
             conv=memory.load(saved_conversation_files[0])
 
 
-
     try:
 
         while 1:
 
             # take message
-            input_message = input("Enter message : ")
+            input_message = io.get_input("Enter message : ")
 
             print("\n")
 
@@ -59,8 +61,7 @@ def app():
             output_message = agent_loop(conv,input_message,tools,tool_registry,client,flex.config)
 
             # print response 
-            print("assistant: ",output_message)
-            print("\n")
+            io.show_output(output_message)
 
     except KeyboardInterrupt:
         print("\nUser pressed Ctrl+C, stopping gracefully")
