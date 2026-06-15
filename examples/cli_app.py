@@ -37,7 +37,7 @@ def app():
 
     if(len(saved_conversation_files) !=0):
         print("Saved file detected , would you like to load the latest one ? ")
-        input_value = input()
+        input_value = io.get_input("")
         no_val = ["no","n","nahi"]
         if input_value in no_val:
             pass
