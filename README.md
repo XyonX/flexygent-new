@@ -39,13 +39,13 @@ pip install -e ".[dev]"
 Create a `.env` file in the project root:
 
 ```env
-API=your-api-key-here
-ENDPOINT=https://your-llm-provider-endpoint
+LLM_API_KEY=your-api-key-here
+LLM_BASE_URL=https://your-llm-provider-endpoint
 ```
 
 **Provider examples:**
 
-| Provider | ENDPOINT |
+| Provider | LLM_BASE_URL |
 |----------|----------|
 | OpenAI | `https://api.openai.com/v1` |
 | OpenRouter | `https://openrouter.ai/api/v1` |
@@ -54,7 +54,7 @@ ENDPOINT=https://your-llm-provider-endpoint
 | Local (LM Studio) | `http://localhost:1234/v1` |
 | Groq | `https://api.groq.com/openai/v1` |
 
-Flexygent uses the OpenAI client library under the hood, so **any provider that exposes an OpenAI-compatible API works out of the box** — just change `API` and `ENDPOINT`.
+Flexygent uses the OpenAI client library under the hood, so **any provider that exposes an OpenAI-compatible API works out of the box** — just change `LLM_API_KEY` and `LLM_BASE_URL`.
 
 ---
 
@@ -245,8 +245,8 @@ Flexygent works with **any OpenAI-compatible API**. Switching providers is just 
 ### OpenAI
 
 ```env
-API=sk-your-openai-key
-ENDPOINT=https://api.openai.com/v1
+LLM_API_KEY=sk-your-openai-key
+LLM_BASE_URL=https://api.openai.com/v1
 ```
 ```python
 config = AgentConfig(model="gpt-4o-mini")
@@ -255,8 +255,8 @@ config = AgentConfig(model="gpt-4o-mini")
 ### DeepSeek
 
 ```env
-API=your-deepseek-key
-ENDPOINT=https://api.deepseek.com/v1
+LLM_API_KEY=your-deepseek-key
+LLM_BASE_URL=https://api.deepseek.com/v1
 ```
 ```python
 config = AgentConfig(model="deepseek-v4-flash")
@@ -265,8 +265,8 @@ config = AgentConfig(model="deepseek-v4-flash")
 ### OpenRouter (access to 100+ models)
 
 ```env
-API=your-openrouter-key
-ENDPOINT=https://openrouter.ai/api/v1
+LLM_API_KEY=your-openrouter-key
+LLM_BASE_URL=https://openrouter.ai/api/v1
 ```
 ```python
 config = AgentConfig(model="anthropic/claude-opus-4.7")
@@ -279,8 +279,8 @@ config = AgentConfig(model="meta-llama/llama-4-maverick")
 ### Local Models (Ollama)
 
 ```env
-API=not-needed
-ENDPOINT=http://localhost:11434/v1
+LLM_API_KEY=not-needed
+LLM_BASE_URL=http://localhost:11434/v1
 ```
 ```python
 config = AgentConfig(model="llama3.2")
@@ -289,8 +289,8 @@ config = AgentConfig(model="llama3.2")
 ### Local Models (LM Studio)
 
 ```env
-API=lm-studio
-ENDPOINT=http://localhost:1234/v1
+LLM_API_KEY=lm-studio
+LLM_BASE_URL=http://localhost:1234/v1
 ```
 ```python
 config = AgentConfig(model="local-model")
