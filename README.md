@@ -21,6 +21,16 @@ Build agentic AI systems that can reason, use tools, remember conversations, and
 
 ## Installation
 
+You can install Flexygent directly from PyPI (recommended) or from source.
+
+### From PyPI
+
+```bash
+pip install flexygent
+```
+
+### From Source (for development)
+
 ```bash
 # Clone the repo
 git clone https://github.com/XyonX/flexygent-new.git
