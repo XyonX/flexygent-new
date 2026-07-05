@@ -1,6 +1,6 @@
 # cli_app.py
 
-from flexygent.types import Conversation,Message,Role,AgentConfig
+from flexygent.types import Conversation,AgentConfig
 from flexygent.types import Agent
 from flexygent.skills import skill_registry,flex_skills
 from flexygent.tools import tool_registry, get_tools

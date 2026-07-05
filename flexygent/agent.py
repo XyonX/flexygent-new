@@ -1,4 +1,4 @@
-from flexygent.types import Conversation,AgentConfig,Message,Role
+from flexygent.types import Conversation,AgentConfig
 from flexygent.tools.base import ToolRegistry
 
 import json

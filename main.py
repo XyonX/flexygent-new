@@ -1,17 +1,13 @@
 
-from flexygent.types import Conversation,Message,Role,AgentConfig
+from flexygent.types import Conversation,AgentConfig
 from flexygent.tools import tool_registry, get_tools
 from flexygent.client import client
 from flexygent.agent import agent_loop
 import json
 from datetime import datetime
 import glob
-from flexygent.prompts import PromptBuilder
 from flexygent.types import Agent
 from flexygent.skills import skill_registry,flex_skills
-import json
-
-
 
 def gen_file_name():
     now = datetime.now()

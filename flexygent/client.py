@@ -1,5 +1,4 @@
-from openai import AsyncOpenAI, OpenAI
-from pydantic import BaseModel,Field
+from openai import OpenAI
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
 import os

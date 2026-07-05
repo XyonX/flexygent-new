@@ -37,10 +37,17 @@ class FileStore(ConversationMemory):
         return sorted([f.name for f in files],reverse=True)
 
     def delete(self, file_name):
-        print("aa")
+        file_dir = self.base_dir / file_name
+
+        if file_dir.exists():
+            file_dir.unlink()
+            return f"Conversation deleted successfully : {file_name}"
+        else:
+            return "No Conversation found to delete"
 
     def exists(self, file_name):
-        print("aa")
+        file_dir = self.base_dir / file_name
+        return file_dir.exists()
 
 
 

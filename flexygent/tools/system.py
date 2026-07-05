@@ -32,7 +32,7 @@ def run_command(params:dict):
                        text=True)
         return result.stdout.strip()
     except Exception as e:
-        return " error running command"
+        return f" Error running command:{str(e)}"
 
 def get_weather(params: dict):
     """Mock weather tool that always returns 25°C"""

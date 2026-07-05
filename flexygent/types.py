@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from flexygent.prompts.builder import PromptBuilder
 
 if TYPE_CHECKING:
-    from flexygent.skills import Skill,SkillRegistry
+    from flexygent.skills import SkillRegistry
 
 
 class Role(str,Enum):
@@ -81,7 +81,7 @@ class Agent(BaseModel):
             if skill is not None:
                 skill_description.append(f"-{skill.name}: {skill.identity_intro} \n -read_file('flexygent/{skill.doc_path}')")
 
-
+        nl='\n'
         # update the builder for available_skills
         skill_str = f"""
 
@@ -90,7 +90,7 @@ class Agent(BaseModel):
     You have the following skills loaded. When a query requires deep 
     expertise in a specific area, read the skill doc first:
 
-    {'\n'.join(skill_description)}
+    {nl.join(skill_description)}
 
     Always read the relevant skill doc before responding to domain-specific queries.
 
