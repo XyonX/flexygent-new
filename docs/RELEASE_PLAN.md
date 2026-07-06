@@ -55,7 +55,7 @@ Before planning releases, here's an honest snapshot of where every component sta
 
 ---
 
-### 🏷️ v0.1.0 — Initial Release (Foundation)
+### ✅ v0.1.0 — Initial Release (Released on PyPI)
 
 > **Goal:** Ship what works. Fix the gaps. Make it installable and usable.
 
@@ -106,11 +106,11 @@ This release packages everything that's already built into a clean, working foun
 - [x] Conversation memory (FileStore)
 - [x] CLI example app
 - [x] Test suite (10 files, 1585 lines)
-- [ ] Fix `FileStore.delete()` and `exists()` stubs
-- [ ] Implement proper `LLMClient` class
-- [ ] Add README.md
-- [ ] Clean up hardcoded values and typos
-- [ ] Add root `__init__.py` with public API exports
+- [x] Fix `FileStore.delete()` and `exists()` stubs
+- [x] Implement proper `LLMClient` class
+- [x] Add README.md
+- [x] Clean up hardcoded values and typos
+- [x] Add root `__init__.py` with public API exports
 
 ---
 
