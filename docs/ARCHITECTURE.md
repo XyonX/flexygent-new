@@ -84,16 +84,15 @@ Why framework? Because **anyone** building an agent server needs persistent conv
 flexygent/memory/
 ├── base.py              # (existing) Abstract ConversationMemory
 ├── file_store.py        # (existing) JSON file implementation
-├── sqlite_store.py      # NEW — SQLite implementation
-└── postgres_store.py    # NEW — PostgreSQL implementation (future)
+└── postgres_store.py    # NEW — PostgreSQL implementation
 ```
 
 The interface stays the same — `save()`, `load()`, `list_saved()`, `delete()`, `exists()`. The app just picks which backend to use:
 
 ```python
 # In Flex (app), you just pick the backend
-from flexygent.memory.sqlite_store import SQLiteStore
-memory = SQLiteStore(db_path="flex.db")
+from flexygent.memory.postgres_store import PostgresStore
+memory = PostgresStore(connection_string="postgresql://...")
 
 # Same API as FileStore — the framework handles the rest
 memory.save(conversation, "conv-123")
@@ -238,7 +237,7 @@ The app defines what a "user" actually is — database model, registration, logi
 
 | New Component | Location | What It Does |
 |--------------|----------|-------------|
-| **SQLite Memory Store** | `flexygent/memory/sqlite_store.py` | `ConversationMemory` backed by SQLite |
+| **Postgres Memory Store** | `flexygent/memory/postgres_store.py` | `ConversationMemory` backed by PostgreSQL |
 | **Auth Middleware** | `flexygent/server/auth.py` | API key check + JWT verification helper |
 | **Chat Router** | `flexygent/server/chat_router.py` | Pre-built `/chat` endpoint (full + streaming) |
 | **Conversation Router** | `flexygent/server/conversation_router.py` | CRUD endpoints for conversations |
@@ -264,7 +263,7 @@ flexygent/
 │   ├── __init__.py
 │   ├── base.py                 # Abstract ConversationMemory (updated with user_id)
 │   ├── file_store.py           # JSON file backend (existing)
-│   └── sqlite_store.py         # NEW — SQLite backend
+│   └── postgres_store.py       # NEW — PostgreSQL backend
 │
 ├── prompts/                    # Prompt system (existing)
 │   └── ...
@@ -314,7 +313,7 @@ Anyone could build their own "Flex" using Flexygent — an education bot, a cust
 ### What Flex Does NOT Do
 
 - ❌ Implement the agent loop (uses `flexygent.agent.agent_loop`)
-- ❌ Implement conversation storage logic (uses `flexygent.memory.SQLiteStore`)
+- ❌ Implement conversation storage logic (uses `flexygent.memory.PostgresStore`)
 - ❌ Implement tool execution (uses `flexygent.tools`)
 - ❌ Implement prompt building (uses `flexygent.prompts`)
 - ❌ Implement auth verification logic (uses `flexygent.server.auth`)
@@ -363,7 +362,7 @@ from flexygent.server.chat_router import router as chat_router
 from flexygent.server.conversation_router import router as conv_router
 from flexygent.server.auth import require_auth
 from flexygent.server.dependencies import configure_agent
-from flexygent.memory.sqlite_store import SQLiteStore
+from flexygent.memory.postgres_store import PostgresStore
 from flexygent.types import Agent, AgentConfig
 from flexygent.skills import skill_registry, flex_skills
 from flexygent.tools import tool_registry, get_tools
@@ -376,7 +375,7 @@ app = FastAPI(title="Flex — Personal AI Agent")
 # Configure the agent (framework handles the rest)
 agent = Agent(name="flex", config=AgentConfig(model="deepseek-v4-flash"))
 agent.apply_skills(flex_skills, skill_registry)
-memory = SQLiteStore(db_path="flex.db")
+memory = PostgresStore(connection_string="postgresql://...")
 
 configure_agent(app, agent=agent, memory=memory, tool_registry=tool_registry)
 
@@ -480,7 +479,7 @@ This is the most important table. For each feature, it shows **where** the code 
 | **LLM Client** | ✅ Owns | Uses | — |
 | **Conversation Storage (Abstract)** | ✅ Owns | Uses | — |
 | **FileStore Backend** | ✅ Owns | Uses | — |
-| **SQLite Backend** | ✅ Owns | Uses | — |
+| **Postgres Backend** | ✅ Owns | Uses | — |
 | **Chat Endpoint (Router)** | ✅ Owns | Mounts | Calls |
 | **Conversation CRUD (Router)** | ✅ Owns | Mounts | Calls |
 | **Streaming Response Helpers** | ✅ Owns | Uses | Consumes |
@@ -508,7 +507,7 @@ This is the most important table. For each feature, it shows **where** the code 
 
 1. **Flexygent is pluggable.** Anyone can build their own "Flex" — a medical chatbot, a coding assistant, a study buddy. They all `pip install flexygent` and wire things together.
 
-2. **Storage is swappable.** The abstract `ConversationMemory` means you can start with `FileStore` (local dev), switch to `SQLiteStore` (single server), and later upgrade to `PostgresStore` (production) — without changing any other code.
+2. **Storage is swappable.** The abstract `ConversationMemory` means you can start with `FileStore` (local dev) and switch to `PostgresStore` (production) — without changing any other code.
 
 3. **Auth is swappable.** The framework provides the verification utilities. The app decides what auth system to use (Firebase, custom JWT, OAuth, API keys).
 
@@ -530,7 +529,7 @@ This is the most important table. For each feature, it shows **where** the code 
 ### Phase 1: Framework Server Utilities (Flexygent v0.2.0)
 
 1. Update `ConversationMemory` base with `user_id` support
-2. Build `SQLiteStore` implementing the updated interface
+2. Build `PostgresStore` implementing the updated interface
 3. Build `flexygent/server/auth.py` — API key + JWT helpers
 4. Build `flexygent/server/chat_router.py` — reusable chat endpoint
 5. Build `flexygent/server/conversation_router.py` — CRUD endpoints
@@ -546,7 +545,7 @@ This is the most important table. For each feature, it shows **where** the code 
 2. Wire up FastAPI with framework routers
 3. Implement user auth (registration, login, JWT)
 4. Configure the agent (model, skills, custom tools)
-5. Set up SQLite database
+5. Set up PostgreSQL database
 6. Add Dockerfile + docker-compose
 7. Deploy to a server
 8. Test end-to-end with curl/Postman
