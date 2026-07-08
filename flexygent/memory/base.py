@@ -3,17 +3,17 @@ from flexygent.types import Conversation
 class ConversationMemory(ABC):
     
     @abstractmethod
-    def save(self,conversation:Conversation,name):
+    def save(self,conversation:Conversation,name,user_id = None):
         ...
     @abstractmethod
-    def load(self,name):
+    def load(self,name:str, user_id=None):
         ...
     @abstractmethod
-    def list_saved(self)->list[str]:
+    def list_saved(self,user_id=None)->list[str]:
         ...
     @abstractmethod
-    def delete(self,name):
+    def delete(self,name, user_id = None):
         ...
     @abstractmethod
-    def exists(self,name):
+    def exists(self,name,user_id =None):
         ...
