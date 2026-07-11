@@ -24,3 +24,128 @@ print(h.to_list())
 print('len:', len(h))
 print('last:', h.last())
 "
+
+
+DATABSE DESIGN
+
+we need a table to store messages 
+and we wil fetch all the messages to make a conversation
+messages contians role content and if this is a tool calling message 
+then the message will contain list of tools
+and the response of a tool call contian a toool call id 
+
+so we need to store this specific field on a message DATABSE
+
+
+--- message ---
+
+-id 
+-role 
+-content
+-//tool calls ( we will be making a new table)
+not this tool cal wont be in the message or we wont bkeeping any
+reference of tool call
+later to make the conversatin 
+we will fertch from th tool call table prividng message id 
+and we will maek the message strcurre 
+
+-and tool call id 
+
+additional 
+
+-creted at 
+-updated at 
+
+
+--- tool calls ---
+
+now as per tool calls databse we need to store this spefic  fiele
+
+a tool calls usually contians things like id and the ceint will send this id with the resposne message for the llm to ensure this is the respone of that speoifc tool calls
+
+with id whic fucntion its calling 
+fucnton contians a arguennt whic is a stirng toring a json
+then the name of thie fucntion it calling 
+so we can make this fucntion a jsonb or directy sore this a json 
+
+and it store a type whic is mostly a fucntion we can ignore to store it or may sotre it iwith a default or fucntion or null as msolty its value "function"
+and the index refers to the index of tool call in that message as in a singel message it may call multiple tool calls 
+
+
+so a tool call effectively may store
+
+-id
+-fucntion(jsonb)
+-type 
+-index
+
+additional 
+
+-message_id (uuid)
+now this message if is crucial 
+later to get all tool call of a particualr message we will be fetchign 
+the tool call whic matches this message it 
+
+    {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+            {
+                "id": "call_00_XWWummOhVXDT7Fh7EKyH3988",
+                "function": {
+                    "arguments": "{\"file_name\": \"~/.flexygent/user/profile.md\", \"output_length\": 500}",
+                    "name": "read_file"
+                },
+                "type": "function",
+                "index": 0
+            }
+        ],
+        "tool_call_id": ""
+    },
+
+
+--- tool ---
+
+to represent a tool we can use the mcps format whic will make it more generaiize and not speifc to openais format 
+
+mcp tool has this format 
+
+      {
+        "name": "add",
+        "description": "Add two numbers",
+        "inputSchema": {
+          "type": "object",
+          "properties": {"a": {"type": "number"}, "b": {"type": "number"}},
+          "required": ["a", "b"]
+        }
+      }
+
+anyway in db table we dont stor format rathre fiels so we must store this comatible fiels or attribute in a tbale 
+and we can also add more attributes if we watn
+
+so we will be keeping this 
+
+
+-name (str)
+-description ( text)
+-input schema (jsonb)
+
+
+additional
+
+-source server ( this is a field that specify from which server this tool came from)
+
+and for the unqique ness we using the combination of name and the source server to be unqeu 
+
+the name doenst necessarily have to be  unqiue as ther could be multiple tool might be added from multiple mcp server 
+
+so the unqiuness of source server and name matter 
+
+
+
+
+
+
+execute order 
+
+Run order becomes: init.sql → tools.sql → conversations.sql → users.sql → messages.sql → tool_calls.sql (respecting FK dependencies — a table can't reference another that doesn't exist yet).
