@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS tool_calls(
     function JSONB NOT NULL ,
     type varchar(50),
     index INTEGER,
-    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS tool_calls_message_id ON tool_calls(message_id);

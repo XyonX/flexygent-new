@@ -9,4 +9,9 @@ CREATE TABLE IF NOT EXISTS tools(
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(name,source_server)
-)
+);
+
+CREATE TRIGGER set_tools_updated_at
+    BEFORE UPDATE ON tools
+    FOR EACH ROW
+    EXECUTE FUNCTION set_updated_at();

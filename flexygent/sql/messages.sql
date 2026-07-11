@@ -10,4 +10,9 @@ CREATE TABLE IF NOT EXISTS messages(
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id)
-)
+);
+
+CREATE TRIGGER set_messages_updated_at
+    BEFORE UPDATE ON messages
+    FOR EACH ROW
+    EXECUTE FUNCTION set_updated_at();
